@@ -44,7 +44,7 @@ class arCAS
     }
 
     $casVersion = sfConfig::get('app_cas_cas_version', '3.0');
-    $validCasVersions = array('1.0', '2.0', '3.0', 'S1');
+    $validCasVersions = array('1.0', '2.0', '3.0');
     $casVersion = in_array($casVersion, $validCasVersions) ? $casVersion : CAS_VERSION_3_0;
 
     phpCAS::client(
