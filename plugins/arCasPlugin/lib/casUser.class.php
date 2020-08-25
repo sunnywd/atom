@@ -91,26 +91,36 @@ class casUser extends myUser implements Zend_Acl_Role_Interface
       $attributeToCheck = array($attributeToCheck);
     }
 
+    // Get array of AclUserGroup IDs the user currently belongs to. This allows
+    // us to avoid accessing the database multiple times when checking group
+    // membership.
+    $currentAclUserGroupIds = array();
+    $criteria = new Criteria;
+    $criteria->add(QubitAclUserGroup::USER_ID, $user->id);
+    foreach (QubitAclUserGroup::get($criteria) as $item)
+    {
+      $currentAclUserGroupIds[] = $item->groupId;
+    }
+
     // Set membership in administrator, editor, contributor, and translator
     // groups based on the presence or absence of expected CAS attributes.
     $userGroups = sfConfig::get('app_cas_user_groups');
-
     foreach ($userGroups as $group)
     {
-      $this->setGroupMembership($user, $attributeToCheck, $group['attribute_value'], $group['group_id']);
+      $this->setGroupMembership($user, $currentAclUserGroupIds, $attributeToCheck, $group['attribute_value'], $group['group_id']);
     }
   }
 
   /**
   * Set membership in QubitAclUserGroup based on presence of expected CAS attribute.
   */
-  private function setGroupMembership($user, $attributeToCheck, $expectedValue, $groupID)
+  private function setGroupMembership($user, $currentAclUserGroupIds, $attributeToCheck, $expectedValue, $groupID)
   {
     if (in_array($expectedValue, $attributeToCheck))
     {
       // CAS attributes say the user belongs to the group, so add them to the
       // group if they're not already a member.
-      if (!$user->hasGroup($groupID))
+      if (!in_array($groupID, $currentAclUserGroupIds))
       {
         $group = new QubitAclUserGroup();
         $group->userId = $user->id;
@@ -122,7 +132,7 @@ class casUser extends myUser implements Zend_Acl_Role_Interface
     {
       // CAS attributes say the user does not belong to the group, so remove
       // them if they are currently a member.
-      if ($user->hasGroup($groupID))
+      if (in_array($groupID, $currentAclUserGroupIds))
       {
         $criteria = new Criteria;
         $criteria->add(QubitAclUserGroup::USER_ID, $user->id);
