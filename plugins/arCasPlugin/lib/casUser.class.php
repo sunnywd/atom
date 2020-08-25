@@ -93,28 +93,11 @@ class casUser extends myUser implements Zend_Acl_Role_Interface
 
     // Set membership in administrator, editor, contributor, and translator
     // groups based on the presence or absence of expected CAS attributes.
-    $userGroups = array(
-      array(
-        'expectedCasValue' => sfConfig::get('app_cas_administrator_value', 'atom-administrator'),
-        'groupID' => QubitAclGroup::ADMINISTRATOR_ID
-      ),
-      array(
-        'expectedCasValue' => sfConfig::get('app_cas_editor_value', 'atom-editor'),
-        'groupID' => QubitAclGroup::EDITOR_ID
-      ),
-      array(
-        'expectedCasValue' => sfConfig::get('app_cas_contributor_value', 'atom-contributor'),
-        'groupID' => QubitAclGroup::CONTRIBUTOR_ID
-      ),
-      array(
-        'expectedCasValue' => sfConfig::get('app_cas_translator_value', 'atom-translator'),
-        'groupID' => QubitAclGroup::TRANSLATOR_ID
-      )
-    );
+    $userGroups = sfConfig::get('app_cas_user_groups');
 
     foreach ($userGroups as $group)
     {
-      $this->setGroupMembership($user, $attributeToCheck, $group['expectedCasValue'], $group['groupID']);
+      $this->setGroupMembership($user, $attributeToCheck, $group['attribute_value'], $group['group_id']);
     }
   }
 
