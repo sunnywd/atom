@@ -49,7 +49,7 @@ class casUser extends myUser implements Zend_Acl_Role_Interface
     // Parse CAS attributes into group memberships. If enabled, we perform this
     // check each time a user authenticates so that changes made on the CAS
     // server are applied in AtoM on the next login.
-    if (sfConfig::get('app_cas_set_groups_from_attributes', false) == true)
+    if (true == sfConfig::get('app_cas_set_groups_from_attributes', false))
     {
       $attributes = phpCAS::getAttributes();
       $this->setGroupsFromCasAttributes($user, $attributes);
@@ -78,7 +78,7 @@ class casUser extends myUser implements Zend_Acl_Role_Interface
     
     $attributeToCheck = $attributes[$attributeKey];
     
-    if ($attributeToCheck === null)
+    if (null === $attributeToCheck)
     {
       sfContext::getInstance()->getLogger()->err('CAS attribute used for setting AtoM group membership is null');
       return;

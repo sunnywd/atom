@@ -36,7 +36,7 @@ class arCAS
 
     require_once sfConfig::get('sf_root_dir').'/vendor/composer/jasig/phpcas/CAS.php';
 
-    if (sfConfig::get('sf_debug', false) == true)
+    if (true == sfConfig::get('sf_debug', false))
     {
       $debugLogPath = sfConfig::get('sf_log_dir').'/phpcas.log';
       phpCAS::setDebug($debugLogPath);
